@@ -6,6 +6,18 @@
       <main>
         <section class="player">
           <h2 class="song-title">{{ current.title }} - <span>{{current.artist}}</span></h2>
+          <div class="controls">
+            <button class="prev">Prev</button>
+            <button class="play" v-if="!isPlaying" @click="play">Play</button>
+            <button class="pause" v-else @click="pause">Pause</button>
+            <button class="next">Next</button>
+          </div>
+        </section>
+        <section class="playlist">
+          <h3>Playlist</h3>
+          <button v-for="song in songs" :key="song.src" @click="play(song)" :class="(song.src == current.src) ? 'song playing' : 'song'">
+             {{ song.title }} - {{ song.artist }}
+          </button>
         </section>
       </main>
   </div>
@@ -15,12 +27,14 @@
 
 
 export default {
+  
   name: 'App',
+  
   data () {
     return {
-      current: {
-        title: 'SONG TITLE'
-      },
+      current: {},
+      index: 0,
+      isPlaying: false,
       songs: [
         {
           title: 'A new beginning',
@@ -30,17 +44,44 @@ export default {
         {
           title: 'Creative Minds',
           artist: 'Ben Sound',
-          src: require('./assets/bensound-creativemings.mp3')
+          src: require('./assets/bensound-creativeminds.mp3')
         },
         {
           title: 'Ukulele',
           artist: 'Ben Sound',
           src: require('./assets/bensound-ukulele.mp3')
         }
-      ]
-
+      ],
+      player: new Audio()
     }
+  },
+
+  methods: {
+
+    play(song){
+
+      if(typeof song.src != "undefined"){
+        this.current = song;
+        this.player.src = this.current.src;
+      }
+      this.player.play();
+      this.isPlaying = true;
+    },
+
+    pause(){
+      this.player.pause();
+      this.isPlaying = false;
+    }
+
+  },
+
+  created(){
+    this.current = this.songs[this.index];
+    this.player.src = this.current.src;
+    //this.player.play();
   }
+
+
 }
 
 
